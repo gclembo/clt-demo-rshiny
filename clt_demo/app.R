@@ -22,7 +22,7 @@ time_data_plot <- tidy_data |>
 
 dist_data_plot <- tidy_data |>
   ggplot(aes(x = price)) +
-  geom_histogram(bins = 40, fill = "#9999FF") +
+  geom_histogram(bins = 14, fill = "#9999FF") +
   facet_wrap(~index) +
   labs(title = "Closing Price Distribution for Indeces",
        x = "Price", y = "Count")
@@ -89,18 +89,18 @@ server <- function(input, output) {
   output$samples <- renderPlot({
     df <- data.frame("price" = samples())
     df |> ggplot(aes(x = price)) +
-      geom_histogram(bins = 30, fill = "#DD55DD") +
+      geom_histogram(bins = 14, fill = "#DD55DD") +
       labs(title = "Distribution of 1000 Samples",
            x = "Price", y = "Count")
   })
 
   output$dist_mean <- renderText({
-    paste0("Mean of Samples: ", mean(samples()))
+    paste0("Mean of Samples: ", round(mean(samples()), 3))
   })
   
   output$normal_test <- renderText({
     test <- shapiro.test(samples())
-    paste0("W = ", test$statistic, ", p-value = ", test$p.value)
+    paste0("W = ", round(test$statistic, 3), ", p-value = ", test$p.value)
   })
   
 
@@ -108,7 +108,7 @@ server <- function(input, output) {
   output$means <- renderTable(spacing = 'm', width = '100%', { 
     tidy_data |>
       group_by(index) |>
-      summarise(mean = mean(price))
+      summarise(mean = round(mean(price), 3))
   })
 
   output$dist_data <- renderPlot({
